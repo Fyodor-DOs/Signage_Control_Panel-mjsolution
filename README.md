@@ -40,7 +40,7 @@ Aplikasi web full-stack untuk mengelola layar digital signage. Admin dapat menge
 
 ```bash
 git clone <url-repositori>
-cd signage-control-panel
+cd Signage_Control_Panel-mjsolution
 ```
 
 ### 2. Konfigurasi Supabase
