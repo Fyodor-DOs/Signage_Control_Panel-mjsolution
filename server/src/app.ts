@@ -4,6 +4,7 @@ import cors from 'cors';
 import authRouter from './routes/auth';
 import devicesRouter from './routes/devices';
 import contentsRouter from './routes/contents';
+import playlistRouter from './routes/playlist';
 
 const app = express();
 
@@ -23,6 +24,7 @@ app.use(express.json());
 // ----------------------------------------------------------------
 app.use('/api/auth', authRouter);
 app.use('/api/devices', devicesRouter);
+app.use('/api/devices/:id/playlist', playlistRouter);
 app.use('/api/contents', contentsRouter);
 
 // ----------------------------------------------------------------

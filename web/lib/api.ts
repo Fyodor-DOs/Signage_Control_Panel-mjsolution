@@ -1,4 +1,4 @@
-import { Device, Content } from './types';
+import { Device, Content, PlaylistItem } from './types';
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
 
@@ -34,6 +34,9 @@ async function fetchWithAuth(url: string, options: RequestInit = {}): Promise<Re
   return response;
 }
 
+// ----------------------------------------------------------------
+// Devices
+// ----------------------------------------------------------------
 export async function getDevices(): Promise<Device[]> {
   const res = await fetchWithAuth('/api/devices');
   if (!res.ok) throw new Error('Failed to fetch devices');
@@ -65,9 +68,7 @@ export async function updateDevice(id: string, data: { nama?: string; lokasi?: s
 }
 
 export async function deleteDevice(id: string): Promise<void> {
-  const res = await fetchWithAuth(`/api/devices/${id}`, {
-    method: 'DELETE',
-  });
+  const res = await fetchWithAuth(`/api/devices/${id}`, { method: 'DELETE' });
   if (!res.ok) throw new Error('Failed to delete device');
 }
 
@@ -80,6 +81,50 @@ export async function attachContent(deviceId: string, contentId: string | null):
   return res.json();
 }
 
+// ----------------------------------------------------------------
+// Playlist
+// ----------------------------------------------------------------
+export async function getPlaylist(deviceId: string): Promise<PlaylistItem[]> {
+  const res = await fetchWithAuth(`/api/devices/${deviceId}/playlist`);
+  if (!res.ok) throw new Error('Failed to fetch playlist');
+  return res.json();
+}
+
+export async function addPlaylistItem(
+  deviceId: string,
+  data: { content_id: string; durasi: number }
+): Promise<PlaylistItem> {
+  const res = await fetchWithAuth(`/api/devices/${deviceId}/playlist`, {
+    method: 'POST',
+    body: JSON.stringify(data),
+  });
+  if (!res.ok) throw new Error('Failed to add playlist item');
+  return res.json();
+}
+
+export async function updatePlaylistItem(
+  deviceId: string,
+  itemId: string,
+  data: { durasi?: number; urutan?: number }
+): Promise<PlaylistItem> {
+  const res = await fetchWithAuth(`/api/devices/${deviceId}/playlist/${itemId}`, {
+    method: 'PUT',
+    body: JSON.stringify(data),
+  });
+  if (!res.ok) throw new Error('Failed to update playlist item');
+  return res.json();
+}
+
+export async function removePlaylistItem(deviceId: string, itemId: string): Promise<void> {
+  const res = await fetchWithAuth(`/api/devices/${deviceId}/playlist/${itemId}`, {
+    method: 'DELETE',
+  });
+  if (!res.ok) throw new Error('Failed to remove playlist item');
+}
+
+// ----------------------------------------------------------------
+// Contents
+// ----------------------------------------------------------------
 export async function getContents(): Promise<Content[]> {
   const res = await fetchWithAuth('/api/contents');
   if (!res.ok) throw new Error('Failed to fetch contents');
@@ -105,9 +150,7 @@ export async function updateContent(id: string, data: { judul?: string; tipe?: '
 }
 
 export async function deleteContent(id: string): Promise<void> {
-  const res = await fetchWithAuth(`/api/contents/${id}`, {
-    method: 'DELETE',
-  });
+  const res = await fetchWithAuth(`/api/contents/${id}`, { method: 'DELETE' });
   if (!res.ok) throw new Error('Failed to delete content');
 }
 
@@ -136,6 +179,9 @@ export async function uploadFile(file: File): Promise<{ url: string }> {
   return res.json();
 }
 
+// ----------------------------------------------------------------
+// Auth
+// ----------------------------------------------------------------
 export async function login(username: string, password: string): Promise<{ token: string }> {
   const res = await fetch(`${BASE_URL}/api/auth/login`, {
     method: 'POST',

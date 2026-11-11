@@ -1,11 +1,12 @@
 'use client';
 
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { Content } from '@/lib/types';
+import { Content, PlaylistItem } from '@/lib/types';
 
 interface UseDeviceSocketResult {
   isConnected: boolean;
   currentContent: Content | null;
+  playlist: PlaylistItem[];
 }
 
 const WS_URL = process.env.NEXT_PUBLIC_WS_URL || 'ws://localhost:4000';
@@ -13,6 +14,7 @@ const WS_URL = process.env.NEXT_PUBLIC_WS_URL || 'ws://localhost:4000';
 export function useDeviceSocket(deviceId: string | null): UseDeviceSocketResult {
   const [isConnected, setIsConnected] = useState(false);
   const [currentContent, setCurrentContent] = useState<Content | null>(null);
+  const [playlist, setPlaylist] = useState<PlaylistItem[]>([]);
   const wsRef = useRef<WebSocket | null>(null);
   const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const reconnectDelayRef = useRef(1000);
@@ -38,6 +40,10 @@ export function useDeviceSocket(deviceId: string | null): UseDeviceSocketResult 
           ws.send(JSON.stringify({ type: 'pong' }));
         } else if (msg.type === 'content:update') {
           setCurrentContent(msg.payload.content);
+          setPlaylist([]); // konten tunggal override playlist
+        } else if (msg.type === 'playlist:update') {
+          setPlaylist(msg.payload.items);
+          setCurrentContent(null);
         }
       } catch {
         // ignore parse errors
@@ -75,5 +81,5 @@ export function useDeviceSocket(deviceId: string | null): UseDeviceSocketResult 
     };
   }, [deviceId, connect]);
 
-  return { isConnected, currentContent };
+  return { isConnected, currentContent, playlist };
 }

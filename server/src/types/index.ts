@@ -19,6 +19,15 @@ export interface Content {
   created_at: string;
 }
 
+export interface PlaylistItem {
+  id: string;
+  device_id: string;
+  content_id: string;
+  urutan: number;
+  durasi: number; // detik
+  content?: Content;
+}
+
 // ------------------------------------
 // WebSocket message union type
 // ------------------------------------
@@ -36,6 +45,12 @@ export type WsMessage =
       payload: {
         contentId: string | null;
         content: Content | null;
+      };
+    }
+  | {
+      type: 'playlist:update';
+      payload: {
+        items: PlaylistItem[];
       };
     }
   | { type: 'ping' }

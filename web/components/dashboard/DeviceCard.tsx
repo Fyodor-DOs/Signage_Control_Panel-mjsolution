@@ -8,6 +8,7 @@ interface DeviceCardProps {
   onEdit: (device: Device) => void;
   onDelete: (device: Device) => void;
   onAttach: (device: Device) => void;
+  onPlaylist: (device: Device) => void;
   realtimeStatus?: { status: 'online' | 'offline'; last_seen: string | null };
 }
 
@@ -24,7 +25,7 @@ function formatLastSeen(lastSeen: string | null): string {
   return date.toLocaleDateString();
 }
 
-export function DeviceCard({ device, onEdit, onDelete, onAttach, realtimeStatus }: DeviceCardProps) {
+export function DeviceCard({ device, onEdit, onDelete, onAttach, onPlaylist, realtimeStatus }: DeviceCardProps) {
   const status = realtimeStatus?.status ?? device.status;
   const lastSeen = realtimeStatus?.last_seen ?? device.last_seen;
   const isOnline = status === 'online';
@@ -80,21 +81,30 @@ export function DeviceCard({ device, onEdit, onDelete, onAttach, realtimeStatus 
       )}
 
       {/* Actions */}
-      <div className="flex items-center gap-2 pt-1 border-t border-gray-100">
+      <div className="flex items-center gap-1.5 pt-1 border-t border-gray-100 flex-wrap">
         <button
           onClick={() => onAttach(device)}
-          className="flex-1 flex items-center justify-center gap-1.5 py-2 px-3 text-xs font-medium text-blue-600 hover:bg-blue-50 rounded-lg transition"
+          className="flex-1 flex items-center justify-center gap-1 py-2 px-2 text-xs font-medium text-blue-600 hover:bg-blue-50 rounded-lg transition"
         >
           <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
           </svg>
           Attach
         </button>
+        <button
+          onClick={() => onPlaylist(device)}
+          className="flex-1 flex items-center justify-center gap-1 py-2 px-2 text-xs font-medium text-violet-600 hover:bg-violet-50 rounded-lg transition"
+        >
+          <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
+          </svg>
+          Playlist
+        </button>
         <Link
           href={`/device?id=${device.id}`}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex-1 flex items-center justify-center gap-1.5 py-2 px-3 text-xs font-medium text-indigo-600 hover:bg-indigo-50 rounded-lg transition"
+          className="flex-1 flex items-center justify-center gap-1 py-2 px-2 text-xs font-medium text-indigo-600 hover:bg-indigo-50 rounded-lg transition"
         >
           <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
@@ -103,7 +113,7 @@ export function DeviceCard({ device, onEdit, onDelete, onAttach, realtimeStatus 
         </Link>
         <button
           onClick={() => onEdit(device)}
-          className="flex-1 flex items-center justify-center gap-1.5 py-2 px-3 text-xs font-medium text-gray-600 hover:bg-gray-50 rounded-lg transition"
+          className="flex-1 flex items-center justify-center gap-1 py-2 px-2 text-xs font-medium text-gray-600 hover:bg-gray-50 rounded-lg transition"
         >
           <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
@@ -112,7 +122,7 @@ export function DeviceCard({ device, onEdit, onDelete, onAttach, realtimeStatus 
         </button>
         <button
           onClick={() => onDelete(device)}
-          className="flex-1 flex items-center justify-center gap-1.5 py-2 px-3 text-xs font-medium text-red-500 hover:bg-red-50 rounded-lg transition"
+          className="flex-1 flex items-center justify-center gap-1 py-2 px-2 text-xs font-medium text-red-500 hover:bg-red-50 rounded-lg transition"
         >
           <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />

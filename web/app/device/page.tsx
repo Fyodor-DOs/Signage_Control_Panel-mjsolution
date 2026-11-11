@@ -1,7 +1,6 @@
 'use client';
 
-import { useState, useEffect, Suspense } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useState, useEffect, Suspense } from 'react';import { useRouter, useSearchParams } from 'next/navigation';
 import { Device } from '@/lib/types';
 import { getDevices } from '@/lib/api';
 import { useDeviceSocket } from '@/hooks/useDeviceSocket';
@@ -69,14 +68,36 @@ function DeviceSelector() {
 }
 
 function DeviceDisplay({ deviceId }: { deviceId: string }) {
-  const { isConnected, currentContent } = useDeviceSocket(deviceId);
+  const { isConnected, currentContent, playlist } = useDeviceSocket(deviceId);
+  const [playlistIndex, setPlaylistIndex] = useState(0);
+
+  // Cycle through playlist items berdasarkan durasi masing-masing
+  useEffect(() => {
+    if (playlist.length === 0) return;
+    setPlaylistIndex(0);
+  }, [playlist]);
+
+  useEffect(() => {
+    if (playlist.length === 0) return;
+    const item = playlist[playlistIndex];
+    if (!item) return;
+    const timer = setTimeout(() => {
+      setPlaylistIndex((prev) => (prev + 1) % playlist.length);
+    }, item.durasi * 1000);
+    return () => clearTimeout(timer);
+  }, [playlist, playlistIndex]);
+
+  // Konten yang ditampilkan: playlist item atau konten tunggal
+  const displayContent =
+    playlist.length > 0
+      ? (playlist[playlistIndex]?.content ?? null)
+      : currentContent;
 
   return (
     <div className="fixed inset-0 bg-black">
-      {/* Content display */}
-      <ContentDisplay content={currentContent} />
+      <ContentDisplay content={displayContent} />
 
-      {/* Connection indicator */}
+      {/* Indikator koneksi */}
       <div className="absolute bottom-4 right-4 z-10">
         <div
           className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium backdrop-blur-sm border ${
@@ -86,9 +107,21 @@ function DeviceDisplay({ deviceId }: { deviceId: string }) {
           }`}
         >
           <span className={`w-1.5 h-1.5 rounded-full ${isConnected ? 'bg-green-400 animate-pulse' : 'bg-red-400'}`} />
-          {isConnected ? 'Connected' : 'Reconnecting...'}
+          {isConnected ? 'Terhubung' : 'Menghubungkan...'}
         </div>
       </div>
+
+      {/* Indikator playlist */}
+      {playlist.length > 0 && (
+        <div className="absolute bottom-4 left-4 z-10">
+          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium bg-black/60 border border-white/20 text-white/70 backdrop-blur-sm">
+            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
+            </svg>
+            {playlistIndex + 1} / {playlist.length}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

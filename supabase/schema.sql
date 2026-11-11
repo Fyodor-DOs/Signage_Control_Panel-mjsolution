@@ -15,8 +15,17 @@ CREATE TABLE IF NOT EXISTS devices (
   content_id uuid        REFERENCES contents(id) ON DELETE SET NULL
 );
 
+CREATE TABLE IF NOT EXISTS playlist_items (
+  id         uuid    PRIMARY KEY DEFAULT gen_random_uuid(),
+  device_id  uuid    NOT NULL REFERENCES devices(id) ON DELETE CASCADE,
+  content_id uuid    NOT NULL REFERENCES contents(id) ON DELETE CASCADE,
+  urutan     integer NOT NULL DEFAULT 0,
+  durasi     integer NOT NULL DEFAULT 10,
+  created_at timestamptz NOT NULL DEFAULT now()
+);
+
 INSERT INTO contents (judul, tipe, payload) VALUES
-  ('Promo Banner',       'image', 'https://placehold.co/1920x1080/png?text=Promo+Banner'),
+  ('Promo Banner',       'image', 'https://mjsolution.co.id/assets/logo.BAhV8Lwj.png'),
   ('Company Video',      'video', 'https://www.w3schools.com/html/mov_bbb.mp4'),
   ('Welcome to Signage', 'text',  'Welcome to Signage');
 

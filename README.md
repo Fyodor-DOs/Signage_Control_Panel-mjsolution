@@ -1,4 +1,4 @@
-# Signage Control Panel
+﻿# Signage Control Panel
 
 Aplikasi web full-stack untuk mengelola layar digital signage. Admin dapat mengelola perangkat (device) dan konten melalui dashboard web, sementara device client menampilkan konten yang ditetapkan dalam mode layar penuh. Status online/offline device diperbarui secara real-time melalui WebSocket tanpa perlu refresh halaman.
 
@@ -6,12 +6,13 @@ Aplikasi web full-stack untuk mengelola layar digital signage. Admin dapat menge
 
 ## Fitur
 
-- [x] Manajemen device (CRUD)
-- [x] Manajemen konten (CRUD dengan upload file ke Supabase Storage)
-- [x] Status device real-time (WebSocket, tanpa refresh)
-- [x] Attach konten ke device (konten di device langsung berubah)
-- [x] Halaman device client (tampilan konten layar penuh)
-- [x] Autentikasi JWT untuk dashboard admin
+- Manajemen device (CRUD)
+- Manajemen konten (CRUD dengan upload file ke Supabase Storage)
+- Status device real-time (WebSocket, tanpa refresh)
+- Attach konten ke device (konten di device langsung berubah)
+- Halaman device client (tampilan konten layar penuh)
+- Autentikasi JWT untuk dashboard admin
+- Playlist per device tambah, hapus, urutkan, dan atur durasi konten dari dashboard
 
 ---
 
@@ -29,7 +30,7 @@ Aplikasi web full-stack untuk mengelola layar digital signage. Admin dapat menge
 
 - Node.js 18 atau lebih baru
 - npm atau yarn
-- Akun Supabase (tier gratis sudah cukup)
+- Akun Supabase tier gratis 
 
 ---
 
@@ -69,9 +70,21 @@ Isi nilainya:
 | `SUPABASE_URL` | Tersedia di Project Settings > API |
 | `SUPABASE_SERVICE_KEY` | Gunakan kunci `service_role` (bukan `anon`) |
 | `PORT` | `4000` |
-| `JWT_SECRET` | String acak yang panjang, bebas ditentukan sendiri |
+| `JWT_SECRET` | String acak yang panjang — generate dengan perintah di bawah |
 | `ADMIN_USERNAME` | Username admin yang kamu inginkan |
 | `ADMIN_PASSWORD` | Password admin yang kamu inginkan |
+
+Untuk generate `JWT_SECRET` yang aman:
+
+```bash
+# Linux / macOS
+node -e "console.log(require('crypto').randomBytes(64).toString('hex'))"
+
+# Windows (PowerShell)
+node -e "console.log(require('crypto').randomBytes(64).toString('hex'))"
+```
+
+Salin output-nya lalu tempel sebagai nilai `JWT_SECRET` di file `.env`.
 
 **Frontend (`web/`):**
 

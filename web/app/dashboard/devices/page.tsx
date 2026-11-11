@@ -8,6 +8,7 @@ import { useAdminSocket } from '@/hooks/useAdminSocket';
 import { DeviceCard } from '@/components/dashboard/DeviceCard';
 import { DeviceForm } from '@/components/dashboard/DeviceForm';
 import { AttachContentModal } from '@/components/dashboard/AttachContentModal';
+import { PlaylistModal } from '@/components/dashboard/PlaylistModal';
 
 function SkeletonCard() {
   return (
@@ -37,6 +38,7 @@ export default function DevicesPage() {
   const [error, setError] = useState<string | null>(null);
   const [editDevice, setEditDevice] = useState<Device | null | 'new'>(null);
   const [attachDevice, setAttachDevice] = useState<Device | null>(null);
+  const [playlistDevice, setPlaylistDevice] = useState<Device | null>(null);
 
   const { isConnected, deviceStatuses } = useAdminSocket(token);
 
@@ -163,6 +165,7 @@ export default function DevicesPage() {
               onEdit={(d) => setEditDevice(d)}
               onDelete={handleDelete}
               onAttach={(d) => setAttachDevice(d)}
+              onPlaylist={(d) => setPlaylistDevice(d)}
             />
           ))}
         </div>
@@ -184,6 +187,15 @@ export default function DevicesPage() {
           contents={contents}
           onAttach={handleAttach}
           onClose={() => setAttachDevice(null)}
+        />
+      )}
+
+      {/* Playlist modal */}
+      {playlistDevice && (
+        <PlaylistModal
+          device={playlistDevice}
+          contents={contents}
+          onClose={() => setPlaylistDevice(null)}
         />
       )}
     </div>

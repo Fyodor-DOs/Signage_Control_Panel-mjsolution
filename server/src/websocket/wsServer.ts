@@ -3,7 +3,7 @@ import { WebSocket, WebSocketServer } from 'ws';
 import * as jwt from 'jsonwebtoken';
 import { URL } from 'url';
 import supabase from '../config/supabase';
-import { Content, WsMessage } from '../types';
+import { Content, PlaylistItem, WsMessage } from '../types';
 
 // ----------------------------------------------------------------
 // In-memory client stores
@@ -39,6 +39,13 @@ export function sendContentUpdate(deviceId: string, content: Content | null): vo
         content,
       },
     });
+  }
+}
+
+export function sendPlaylistUpdate(deviceId: string, items: PlaylistItem[]): void {
+  const ws = deviceClients.get(deviceId);
+  if (ws) {
+    send(ws, { type: 'playlist:update', payload: { items } });
   }
 }
 
@@ -171,6 +178,17 @@ export function initWsServer(server: http.Server): WebSocketServer {
       }
       deviceClients.set(deviceId, ws);
       setDeviceOnline(deviceId);
+      // Kirim playlist yang ada ke device begitu konek
+      supabase
+        .from('playlist_items')
+        .select('*, content:contents(*)')
+        .eq('device_id', deviceId)
+        .order('urutan', { ascending: true })
+        .then(({ data }) => {
+          if (data && data.length > 0) {
+            send(ws, { type: 'playlist:update', payload: { items: data } });
+          }
+        });
       console.log(`[WS] Device connected: ${deviceId}`);
 
       ws.on('message', (data: Buffer) => {
