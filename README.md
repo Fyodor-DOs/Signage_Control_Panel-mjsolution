@@ -1,4 +1,4 @@
-﻿# Signage Control Panel
+# Signage Control Panel
 
 Aplikasi web full-stack untuk mengelola layar digital signage. Admin dapat mengelola perangkat (device) dan konten melalui dashboard web, sementara device client menampilkan konten yang ditetapkan dalam mode layar penuh. Status online/offline device diperbarui secara real-time melalui WebSocket tanpa perlu refresh halaman.
 
@@ -48,6 +48,13 @@ cd Signage_Control_Panel-mjsolution
 1. Buat project baru di [https://supabase.com](https://supabase.com).
 2. Di **SQL Editor**, jalankan isi file `supabase/schema.sql` untuk membuat tabel yang dibutuhkan.
 3. Buka menu **Storage**, buat bucket baru bernama `contents`, dan atur visibilitasnya menjadi **Public**.
+4. Untuk mendapatkan **Supabase URL**, buka **Settings → General**, salin **Project ID** lalu bentuk URL: `https://<PROJECT_ID>.supabase.co`
+
+   ![SUPABASE_URL](./SUPABASE_URL.png)
+
+5. Untuk mendapatkan **Service Key**, buka **Settings → API Keys**, salin API KEY dari bagian **Secret keys** (baris `default`).
+
+   ![SUPABASE_SERVICE_KEY](./SUPABASE_SERVICE_KEY.png)
 
 ### 3. Konfigurasi variabel lingkungan (environment variables)
 
@@ -70,7 +77,7 @@ Isi nilainya:
 | `SUPABASE_URL` | Tersedia di Project Settings > API |
 | `SUPABASE_SERVICE_KEY` | Gunakan kunci `service_role` (bukan `anon`) |
 | `PORT` | `4000` |
-| `JWT_SECRET` | String acak yang panjang — generate dengan perintah di bawah |
+| `JWT_SECRET` | String acak yang panjang (generate dengan perintah di bawah) |
 | `ADMIN_USERNAME` | Username admin yang kamu inginkan |
 | `ADMIN_PASSWORD` | Password admin yang kamu inginkan |
 
